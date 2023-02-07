@@ -11,7 +11,7 @@ import { Timestamp } from '@firebase/firestore';
 
 const firebaseConfig = {
 
-  apiKey: import.meta.env.VITE_SOME_GOOGLE_MAPS_API_KEY,
+  apiKey: import.meta.vite.env.VITE_FB_API_KEY,
 
   authDomain: "maps-371417.firebaseapp.com",
 
