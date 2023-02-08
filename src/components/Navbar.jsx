@@ -7,7 +7,7 @@ import LoginAnon from './LoginAnon'
 
 
 
-const Navbar =({user}) => {
+const Navbar =({user,admin,riders,manager}) => {
 
   const navigate = useNavigate()
 
@@ -28,10 +28,8 @@ const Navbar =({user}) => {
   return (
     <div className="nav">
 
-{user && <> 
+{user&& <> 
   <Link className='nav-link' to='/'>map</Link>  
-<Link className='nav-link' to='/admin'>admin</Link>
-<Link className='nav-link' to='/Driver'>driver</Link>
 <div className='logged-in'>
 <p> logged in as {user}</p>
 <button className='navlink navlinklogout'
@@ -40,8 +38,44 @@ const Navbar =({user}) => {
 
 </>}
 
-{!user && <> 
+{admin&& <> 
   <Link className='nav-link' to='/'>map</Link>  
+<Link className='nav-link' to='/admin'>admin</Link>
+<div className='logged-in'>
+<p> logged in as {admin}</p>
+<button className='navlink navlinklogout'
+                     onClick={handleLogout}>LOGOUT</button>
+</div>
+
+</>}
+
+{manager&& <> 
+  <Link className='nav-link' to='/'>map</Link>  
+<Link className='nav-link' to='/admin'>admin</Link>
+<Link className='nav-link' to='/d1'>d1</Link>
+<Link className='nav-link' to='/driver'>driver</Link>
+<div className='logged-in'>
+<p> logged in as {manager}</p>
+<button className='navlink navlinklogout'
+                     onClick={handleLogout}>LOGOUT</button>
+</div>
+
+</>}
+
+{riders&& <> 
+ 
+<Link className='nav-link' to='/driver'>driver</Link>
+<div className='logged-in'>
+<p> logged in as {riders}</p>
+<button className='navlink navlinklogout'
+                     onClick={handleLogout}>LOGOUT</button>
+</div>
+
+</>}
+
+
+
+{!user && !admin && !riders && !manager &&<> 
 <Link className='nav-link' to='/login'>login</Link>
 <Link className='nav-link' to='/signup'>signup</Link>
 </>}

@@ -43,11 +43,6 @@ function GetCurrentUser(){
     useEffect(()=>{
         auth.onAuthStateChanged(user=>{
             if(user){
-                 fs.collection('users').doc(user.uid).get().then(snapshot=>{
-                    setUser(snapshot.data().FullName);
-                 })
-            } 
-            if(user){
               fs.collection('admin').doc(user.uid).get().then(snapshot => {
                 setUser(snapshot.data().FullName);
               })
@@ -60,7 +55,30 @@ function GetCurrentUser(){
     return user;
 }
 
-const user = GetCurrentUser();
+const admin = GetCurrentUser();
+
+function GetCurrentManager(){
+  const [user, setUser]=useState(null);
+  useEffect(()=>{
+      auth.onAuthStateChanged(user=>{
+          if(user){
+               fs.collection('manager').doc(user.uid).get().then(snapshot=>{
+                  setUser(snapshot.data().FullName);
+
+
+               })
+
+
+          } 
+          else{
+              setUser(null);
+          }
+      })
+  },[])
+  return user;
+}
+
+const manager = GetCurrentManager();
  //console.log(user);
 
   
@@ -107,7 +125,7 @@ setDuration(results.routes[0].legs[0].duration.text)
 
 
 
-/////////
+
 
 
  const [ test, setTest] = useState([])
@@ -142,23 +160,30 @@ useEffect(() => {
     deleteDoc(doc(db, "place",deleteMarkers))
   }
   
-
+  const [ local,setLocal] = useState([])
+  useEffect(() => {
+    const local = async () => {
+      const colRef = (collection(db,'place'))
+      onSnapshot(colRef, (snapshot) => {
+        setLocal(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      })
+    }
+  local();
+  }, [])
   
 
 
 const [markers, setMarkers] = useState([])
 const [ deleteMarkers, setDeleteMarkers ] = useState("")
 
- const LngResult = () => driver.map(driver => (<div>
-<input value='click here' onClick={(e) => {setMarkers((current) => [...current, {
-  lat:driver.lat,
-  lng:driver.lng,
-  
-  time:new Date(),
-}])}} /> 
-  <button onClick={(e) => setDeleteMarkers(driver.id)}> remove    </button>  
+
+const LngResult = () => local.map((local,i) => 
+  (<div key={i}>
+
+<h2  onClick={() => { setDeleteMarkers(local.id) }}>{local.number} </h2> 
+  <button onClick={(e) =>{  deleteDoc(doc(db, "place",local.id))}}> remove    </button>  
  </div> ))
- 
+
 
  const [number, setNumber ] = useState('')
  const soundEl = useRef(null)
@@ -197,7 +222,7 @@ const Dest = () => test.map((test, index)  =>  ( <div key={index}    >
    })
   
   
-     }}  >  <a href='http://localhost:3000/?#/d1'   target="_blank" rel="noreferrer"  > Accept Route</a></button>
+     }}  >  <a href='https://balanss.github.io/taxi-test/#/d1'   target="_blank" rel="noreferrer"  > Accept Route</a></button>
         <button  onClick={(e) => {deleteDoc(doc(db, "test",test.id))}}> delete </button>
   </form>
   
@@ -221,75 +246,80 @@ useEffect(() => {
 }, []);
 
 
-
-
+console.log(admin)
+//add settimeout back to homepage
    
    if(!isLoaded){
     return <div> loading .... </div>
   
-  } if (isLoaded) 
+  } if (isLoaded && (manager) || (admin)) {
 
-
-
-  return (<>
-    <div className='admin-side'>
-      <Navbar user={user} />
-      <div className='split'>
-        
-
-
-<div className='rides'> 
-<div className='admin-see'>
-<Dest />
-
-<Pending />   
-</div>
- <input className='hide' id='input' type="text" placeholder='from'  ref={originRef} defaultValue={startLocation}  /> 
-       <input className='hide' type="text" placeholder='to'  ref={destiantionRef}  defaultValue={endLocation} /> 
+    return (<>
+      <div className='admin-side'>
+        <Navbar admin={admin} manager={manager} />
+        <div className='split'>
+          
   
-
-
- 
-       </div> 
-       
-      <div className='map-and-markers'>
-      <GoogleMap id="map"
-       zoom={12}
- center={center}
- mapContainerClassName="map-container" >
- {markers.map((marker) => (
-  <Marker 
-  key={marker.time.toISOString()} 
-  position = {{lat:marker.lat,lng:marker.lng}}/>
- ))}
- <Marker />
-          {directionsResponse && (
-            <DirectionsRenderer directions={directionsResponse} />
-          )}
-
   
-
-       </GoogleMap>
-      <div className='driverLocal'> 
-       <LngResult />
-       <button onClick={handleDel}> del marker on map</button> </div>
-      </div>
-       
-     
-       <audio 
-        src={correct}
-        ref={soundEl}
-        muted
-       
-        > sound</audio>
-
-      </div>
-     
-     
-   
-      </div>
+  <div className='rides'> 
+  <div className='admin-see'>
+  <Dest />
+  
+  <Pending />   
+  </div>
+   <input className='hide' id='input' type="text" placeholder='from'  ref={originRef} defaultValue={startLocation}  /> 
+         <input className='hide' type="text" placeholder='to'  ref={destiantionRef}  defaultValue={endLocation} /> 
     
-  </>)
+  
+  
+   
+         </div> 
+         
+        <div className='map-and-markers'>
+        <GoogleMap id="map"
+         zoom={12}
+   center={center}
+   mapContainerClassName="map-container" >
+     {local.map((local,i) => (
+    <Marker 
+    key={i}
+    position = {{lat:local.lat,lng:local.lng}}
+    label="yello"/>
+  
+   ))}
+   
+            {directionsResponse && (
+              <DirectionsRenderer directions={directionsResponse} />
+            )}
+  
+    
+  
+         </GoogleMap>
+        <div className='driverLocal'> 
+        <LngResult />
+         </div>
+        </div>
+         
+       
+         <audio 
+          src={correct}
+          ref={soundEl}
+          muted
+         
+          > sound</audio>
+  
+        </div>
+       
+       
+     
+        </div>
+      
+    </>)
+  } else if (!admin){ return null}
+
+
+
+  
   
 
 }

@@ -252,7 +252,7 @@ function ButtonDriver (){
   return Test();
 }
 
-console.log(id);
+
 // get data id to match 
 
 function DeleteRide(){
@@ -294,21 +294,13 @@ function GetCurrentUser(){
     const [user, setUser]=useState(null);
     useEffect(()=>{
         auth.onAuthStateChanged(user=>{
-            if(user==='purry'){
-                 fs.collection('users').doc(user.uid).get().then(snapshot=>{
+            if(user){
+                 fs.collection('rider').doc(user.uid).get().then(snapshot=>{
                     setUser(snapshot.data().FullName);
-
-
                  })
-
-
             }
-            else if(user){
-              fs.collection('rider').doc(user.uid).get().then(snapshot => {
-                setUser(snapshot.data().FullName);
-                setNumber(snapshot.data().Number);
-              })
-            }
+            
+            
             else{
                 setUser(null);
             }
@@ -317,21 +309,43 @@ function GetCurrentUser(){
     return user;
 }
 
-const user = GetCurrentUser();
+const riders = GetCurrentUser();
+function GetCurrentManager(){
+  const [user, setUser]=useState(null);
+  useEffect(()=>{
+      auth.onAuthStateChanged(user=>{
+          if(user){
+               fs.collection('manager').doc(user.uid).get().then(snapshot=>{
+                  setUser(snapshot.data().FullName);
+
+
+               })
+
+
+          } 
+          else{
+              setUser(null);
+          }
+      })
+  },[])
+  return user;
+}
+
+const manager = GetCurrentManager();
 
 
 
 
-
+// (ndriver ===number) 
    if(!isLoaded){
     return <div> loading .... </div>
   
-  } if (isLoaded || (ndriver ===number)) 
+  }  if (isLoaded && (manager) || (rider)) 
   {
     return (
 
       <div className=''>
-          <Navbar user={user} />
+          <Navbar riders={riders} manager={manager}/>
        
           <Clockin/>
          
@@ -396,7 +410,7 @@ const user = GetCurrentUser();
         
           </div>
     )
-  } 
+  }  else {return null;}
     
 
   

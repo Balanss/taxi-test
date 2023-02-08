@@ -13,15 +13,15 @@ const firebaseConfig = {
 
   apiKey: import.meta.env.VITE_FB_API_KEY,
 
-  authDomain: "maps-371417.firebaseapp.com",
+  authDomain: import.meta.env.VITE_FB_AUTH_DOMAIN,
 
-  projectId: "maps-371417",
+  projectId: import.meta.env.VITE_FB_PROJECT_ID,
 
-  storageBucket: "maps-371417.appspot.com",
+  storageBucket: import.meta.env.VITE_FB_STORAGE_B,
 
-  messagingSenderId: "262710273291",
+  messagingSenderId: import.meta.env.VITE_FB_,
 
-  appId: "1:262710273291:web:c8ca1af103889e8612ee0e"
+  appId: import.meta.env.VITE_FB_APP_ID,
 
 
 };

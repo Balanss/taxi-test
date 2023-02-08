@@ -37,6 +37,8 @@ const {isLoaded} = useLoadScript({googleMapsApiKey:import.meta.env.VITE_SOME_GOO
         auth.onAuthStateChanged(user=>{
             if(user){
                 setUid(user.uid);
+            } else if (admin){
+              setUid(admin.uid);
             }
         })
     },[])
@@ -59,11 +61,7 @@ function GetCurrentUser(){
                  })
 
 
-            } if(user){
-              fs.collection('admin').doc(user.uid).get().then(snapshot => {
-                setUser(snapshot.data().FullName);
-              })
-            }
+            } 
             else{
                 setUser(null);
             }
@@ -72,8 +70,78 @@ function GetCurrentUser(){
     return user;
 }
 
+
+
+function GetCurrentAdmin(){
+  const [user, setUser]=useState(null);
+  useEffect(()=>{
+      auth.onAuthStateChanged(user=>{
+          if(user){
+               fs.collection('admin').doc(user.uid).get().then(snapshot=>{
+                  setUser(snapshot.data().FullName);
+
+
+               })
+
+
+          } 
+          else{
+              setUser(null);
+          }
+      })
+  },[])
+  return user;
+}
+
+
+function GetCurrentRiders(){
+  const [user, setUser]=useState(null);
+  useEffect(()=>{
+      auth.onAuthStateChanged(user=>{
+          if(user){
+               fs.collection('rider').doc(user.uid).get().then(snapshot=>{
+                  setUser(snapshot.data().FullName);
+
+
+               })
+
+
+          } 
+          else{
+              setUser(null);
+          }
+      })
+  },[])
+  return user;
+}
+
+
+function GetCurrentManager(){
+  const [user, setUser]=useState(null);
+  useEffect(()=>{
+      auth.onAuthStateChanged(user=>{
+          if(user){
+               fs.collection('manager').doc(user.uid).get().then(snapshot=>{
+                  setUser(snapshot.data().FullName);
+
+
+               })
+
+
+          } 
+          else{
+              setUser(null);
+          }
+      })
+  },[])
+  return user;
+}
+
 const user = GetCurrentUser();
- //console.log(user);
+const admin = GetCurrentAdmin();
+const riders = GetCurrentRiders()
+const manager = GetCurrentManager();
+ 
 
 
 
@@ -171,7 +239,7 @@ const initMap =() => {
              Geocode.fromLatLng(position.coords.latitude , position.coords.longitude).then(
               (response) => {
                 const address = response.results[0].formatted_address;
-                console.log(address);
+               
               setStarts(address)
               },
               (error) => {
@@ -192,7 +260,7 @@ const initMap =() => {
         Geocode.fromLatLng(position.coords.latitude , position.coords.longitude).then(
           (response) => {
             const address = response.results[0].formatted_address;
-            console.log(address);
+           
           },
           (error) => {
             console.error(error);
@@ -268,7 +336,7 @@ function Map(){
 
 return  (
 <div  className='client-whole-div'>
-<Navbar user={user} />
+<Navbar user={user} admin={admin} riders={riders} manager={manager} />
 <GoogleMap id="map"
  zoom={12}
  center={center}
