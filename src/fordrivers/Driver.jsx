@@ -8,7 +8,7 @@ onSnapshot,query,addDoc,deleteDoc,doc,updateDoc
 } from "firebase/firestore";
 import Map from '../components/Map'
 import { GoogleMap, useLoadScript,Marker, DirectionsRenderer, Autocomplete,} from "@react-google-maps/api";
-import DriversSee from './DriversSee';
+
 
 
 
@@ -340,7 +340,7 @@ const manager = GetCurrentManager();
    if(!isLoaded){
     return <div> loading .... </div>
   
-  }  if (isLoaded && (manager) || (rider)) 
+  }  if (isLoaded && (manager) || (riders)) 
   {
     return (
 

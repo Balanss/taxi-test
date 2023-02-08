@@ -49,6 +49,7 @@ const uid = GetUserUid(); // ignore errror
 
 
 // getting current user function
+const [ userNumber, setUserNumber ] = useState(null)
 function GetCurrentUser(){
     const [user, setUser]=useState(null);
     useEffect(()=>{
@@ -56,6 +57,8 @@ function GetCurrentUser(){
             if(user){
                  fs.collection('users').doc(user.uid).get().then(snapshot=>{
                     setUser(snapshot.data().FullName);
+                    setUserNumber(snapshot.data().Number);
+                    
 
 
                  })
@@ -330,7 +333,7 @@ function confirm(){
  
 }
  
-
+console.log(user)
  
 function Map(){
 
@@ -353,8 +356,8 @@ return  (
 <Autocomplete>
  <input id='input' className='client-input' type="text" placeholder='from' defaultValue={starts}  ref={originRef}  onBlur={(e) =>setStarts(e.target.value) } />  
 </Autocomplete>
-<input  type="text" className='client-input' placeholder='name ' defaultValue={name} onBlur={(e) =>setName(e.target.value) }/>
-<input  type="text" className='client-input' placeholder='number ' defaultValue={number} onBlur={(e) =>setNumber(e.target.value) }/>
+<input  type="text" className='client-input' placeholder='name ' defaultValue={user}  onBlur={(e) =>setName(e.target.value) }/>
+<input  type="text" className='client-input' placeholder='number ' defaultValue={userNumber} onBlur={(e) =>setNumber(e.target.value) }/>
 
  <Autocomplete> 
    <input type="text" className='client-input' placeholder='to'  ref={destiantionRef} defaultValue={end} onBlur={(e) =>setEnd(e.target.value) }/> 
