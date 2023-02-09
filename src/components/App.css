@@ -35,9 +35,11 @@ input{
 
 
 .split{
-     display: flex;
-    flex-wrap: wrap;
+    display: flex;
     background-color: cornflowerblue;
+    flex-direction: column-reverse;
+    flex-wrap: wrap;
+    align-items: center;
    
 }
 

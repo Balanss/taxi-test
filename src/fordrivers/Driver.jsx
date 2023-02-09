@@ -14,6 +14,7 @@ import { GoogleMap, useLoadScript,Marker, DirectionsRenderer, Autocomplete,} fro
 
 
 
+
  export function State  ({lat ,lon}) {
   return <p> {lat} {lon} </p>
 }
@@ -59,7 +60,7 @@ export default function Driver ()  {
 
   useEffect(() => {
     const dispatch = async () => {
-      const colRef = (collection(db,'driver',))
+      const colRef =  (collection(db,'driver',))
       onSnapshot(colRef, (snapshot) => {
         setDispatch(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       })
@@ -70,7 +71,7 @@ export default function Driver ()  {
 
   useEffect(() => {
     const rider = async () => {
-      const colRef = (collection(db,'rider',))
+      const colRef =  (collection(db,'rider',))
       onSnapshot(colRef, (snapshot) => {
         setRider(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       })
@@ -87,9 +88,7 @@ export default function Driver ()  {
    });
    const center = {lat:5.839398 ,lng:-55.199089}
 
-   function initMap(){
-
-   
+   function  initMap (){
     var map, infoWindow;
       map = new google.maps.Map(document.getElementById("map"), {
           center: { lat:5.839398,lng:-55.199089 },
@@ -108,17 +107,8 @@ export default function Driver ()  {
                    infoWindow.setContent(number);
                   infoWindow.open(map);
                   map.setCenter(pos);
-                 
-                
                     setLat(position.coords.latitude)
-                    setLon(position.coords.longitude)
-                    
-                    
-           
-            
-           
-  
-                 
+                    setLon(position.coords.longitude)          
               }, function () {
                   handleLocationError(true, infoWindow, map.getCenter());
               });
@@ -274,7 +264,7 @@ function DeleteRideFromClient(){
  }
  
    // getting current user uid
-   function GetUserUid(){
+ function GetUserUid(){
     const [uid, setUid]=useState(null);
     useEffect(()=>{
         auth.onAuthStateChanged(user=>{
@@ -287,8 +277,6 @@ function DeleteRideFromClient(){
 }
 
 const uid = GetUserUid(); // ignore errror
-
-
 // getting current user function
 function GetCurrentUser(){
     const [user, setUser]=useState(null);
@@ -355,16 +343,23 @@ const manager = GetCurrentManager();
             
           <div className='driver-view'>
           <button  id='button' className='map-btn button' onClick={() =>{setInterval(() => {
-            initMap()
-          },10000)
-         
+            initMap();
+            
+          },40000)
+
+        
+
           setTimeout(() => {
             handleClick()
           },11000)
           } 
          
+
+        
           
           }> Open For Ride </button>
+
+            <p> {lat} ..... {lon}</p>
   <button className='button'  onClick={() =>  setInterval(() => {
   ButtonLocal();
 
@@ -388,7 +383,7 @@ const manager = GetCurrentManager();
     <button className='button'  onClick={() => {
      DeleteRide(); 
       DeleteRideFromClient();
-    }}> Remove Ride  aa </button>
+    }}> Remove Ride   </button>
      
      <Client/>
 

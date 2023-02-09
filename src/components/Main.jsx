@@ -168,22 +168,17 @@ const [map, setMap] = useState(/** @type google.maps.Map */ (null))
 
 
 
-    /** @type React.ImmutableRefObject<HTMLInputElement> */
-    const originRef = useRef()
-    /** @type React.MutableRefObject<HTMLInputElement> */
-    const destiantionRef = useRef()
+     let destiantionRef = useRef()
+     let inputRef= useRef()
 
   async function calculateRoute() {
-    if (originRef.current.value === '' || destiantionRef.current.value === '') {
+    if (inputRef.current.value === '' || destiantionRef.current.value === '') {
       return 
-    }
-
-
-
+    } 
     // eslint-disable-next-line no-undef
     const directionsService = new google.maps.DirectionsService()
     const results = await directionsService.route({
-      origin: originRef.current.value,
+      origin: inputRef.current.value,
       destination: destiantionRef.current.value,
       // eslint-disable-next-line no-undef
       travelMode: google.maps.TravelMode.DRIVING,
@@ -191,10 +186,16 @@ const [map, setMap] = useState(/** @type google.maps.Map */ (null))
     setDirectionsResponse(results)
     setDistance(results.routes[0].legs[0].distance.text)
     setDuration(results.routes[0].legs[0].duration.text)
-    setStarts( originRef.current.value);
+    setStarts( inputRef.current.value);
     setEnd(destiantionRef.current.value);
 
   }
+
+  
+
+
+
+
 
   function clearRoute() {
     setDirectionsResponse(null)
@@ -204,7 +205,7 @@ const [map, setMap] = useState(/** @type google.maps.Map */ (null))
     setLon('')
     setContent('')
     setStarts('')
-    originRef.current.value = ''
+    inputRef.current.value = ''
     destiantionRef.current.value = ''
   }
 
@@ -333,7 +334,44 @@ function confirm(){
  
 }
  
-console.log(user)
+const AutoComplete = () => {
+  const autoCompleteRef = useRef();
+  inputRef = useRef();
+  const options = {
+   componentRestrictions: { country: "sr" },
+  };
+  useEffect(() => {
+   autoCompleteRef.current = new window.google.maps.places.Autocomplete(
+    inputRef.current,
+    options
+   );
+  }, []);
+  return (
+   <div>
+    <label>enter address :</label>
+    <input id='input' className='client-input' type="text" placeholder='from' defaultValue={starts}  ref={inputRef}  onClick={(e) =>setChange(e.target.value) }   />
+   </div>
+  );
+ };
+ const AutoCompleted = () => {
+  const autoCompleteRef = useRef();
+  destiantionRef = useRef();
+  const options = {
+   componentRestrictions: { country: "sr" },
+  };
+  useEffect(() => {
+   autoCompleteRef.current = new window.google.maps.places.Autocomplete(
+    destiantionRef.current,
+    options
+   );
+  }, []);
+  return (
+   <div>
+    <label>enter address :</label>
+    <input type="text" className='client-input' placeholder='to'  ref={destiantionRef} defaultValue={end} onBlur={(e) =>setChange(e.target.value) }   />
+   </div>
+  );
+ };
  
 function Map(){
 
@@ -353,16 +391,10 @@ return  (
 <div className='client-status'> <Client  /></div> 
 <form onSubmit={handleSumbit} className='client-form'>
 
-<Autocomplete>
- <input id='input' className='client-input' type="text" placeholder='from' defaultValue={starts}  ref={originRef}  onBlur={(e) =>setStarts(e.target.value) } />  
-</Autocomplete>
+<AutoComplete></AutoComplete>
+    <AutoCompleted></AutoCompleted>
 <input  type="text" className='client-input' placeholder='name ' defaultValue={user}  onBlur={(e) =>setName(e.target.value) }/>
 <input  type="text" className='client-input' placeholder='number ' defaultValue={userNumber} onBlur={(e) =>setNumber(e.target.value) }/>
-
- <Autocomplete> 
-   <input type="text" className='client-input' placeholder='to'  ref={destiantionRef} defaultValue={end} onBlur={(e) =>setEnd(e.target.value) }/> 
-    </Autocomplete>  
-    
     <button onClick={confirm}> confirm </button>
     <button onClick={calculateRoute} > enter </button>
     <button onClick={clearRoute}> del route </button>
