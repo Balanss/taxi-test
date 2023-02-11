@@ -171,31 +171,7 @@ const [map, setMap] = useState(/** @type google.maps.Map */ (null))
      let destiantionRef = useRef()
      let inputRef= useRef()
 
-  async function calculateRoute() {
-    if (inputRef.current.value === '' || destiantionRef.current.value === '') {
-      return 
-    } 
-    // eslint-disable-next-line no-undef
-    const directionsService = new google.maps.DirectionsService()
-    const results = await directionsService.route({
-      origin: inputRef.current.value,
-      destination: destiantionRef.current.value,
-      // eslint-disable-next-line no-undef
-      travelMode: google.maps.TravelMode.DRIVING,
-    })
-    setDirectionsResponse(results)
-    setDistance(results.routes[0].legs[0].distance.text)
-    setDuration(results.routes[0].legs[0].duration.text)
-    setStarts( inputRef.current.value);
-    setEnd(destiantionRef.current.value);
-
-  }
-
   
-
-
-
-
 
   function clearRoute() {
     setDirectionsResponse(null)
@@ -205,6 +181,7 @@ const [map, setMap] = useState(/** @type google.maps.Map */ (null))
     setLon('')
     setContent('')
     setStarts('')
+    setEnd('')
     inputRef.current.value = ''
     destiantionRef.current.value = ''
   }
@@ -319,21 +296,6 @@ function handleSumbit(e){
 
 
 
-function confirm(){
-  const colRef=collection(db,"test")
-  addDoc(colRef, {
-    name:name,
-    start:starts,
-    end:end,
-    distance:distance,
-    duration:duration,
-    number:number,
-    status:'client waiting',
-    timestamp:serverTimestamp()
-  })
- 
-}
- 
 const AutoComplete = () => {
   const autoCompleteRef = useRef();
   inputRef = useRef();
@@ -347,9 +309,11 @@ const AutoComplete = () => {
    );
   }, []);
   return (
-   <div>
-    <label>enter address :</label>
-    <input id='input' className='client-input' type="text" placeholder='from' defaultValue={starts}  ref={inputRef}  onClick={(e) =>setChange(e.target.value) }   />
+   <div className='displayflex'>
+
+    <input id='input' className='client-input' type="text" placeholder='from' defaultValue={starts}  ref={inputRef}  onBlur={(e) =>setStarts (e.target.value) }   />
+    <input  type="text" className='client-input' placeholder='name ' defaultValue={user} />
+    <input  type="text" className='client-input' placeholder='number ' defaultValue={userNumber}/>
    </div>
   );
  };
@@ -367,12 +331,59 @@ const AutoComplete = () => {
   }, []);
   return (
    <div>
-    <label>enter address :</label>
-    <input type="text" className='client-input' placeholder='to'  ref={destiantionRef} defaultValue={end} onBlur={(e) =>setChange(e.target.value) }   />
+   
+    <input type="text" className='client-input' placeholder='to'  ref={destiantionRef} defaultValue={end} onBlur={(e) => setEnd(e.target.value) }   />
    </div>
   );
  };
  
+
+ async function calculateRoute() {
+  if (inputRef.current.value === '' || destiantionRef.current.value === '') {
+    return 
+  } 
+  // eslint-disable-next-line no-undef
+  const directionsService = new google.maps.DirectionsService()
+  const results = await directionsService.route({
+    origin: inputRef.current.value,
+    destination: destiantionRef.current.value,
+    // eslint-disable-next-line no-undef
+    travelMode: google.maps.TravelMode.DRIVING,
+  })
+  setDirectionsResponse(results)
+  setDistance(results.routes[0].legs[0].distance.text)
+  setDuration(results.routes[0].legs[0].duration.text)
+  setStarts( inputRef.current.value);
+  setEnd(destiantionRef.current.value);
+
+  const colRef=collection(db,"test")
+  addDoc(colRef, {
+    name:user,
+    start:starts,
+    end:end,
+    distance:results.routes[0].legs[0].distance.text,
+    duration:results.routes[0].legs[0].duration.text,
+    number:number,
+    status:'client waiting',
+    timestamp:serverTimestamp()
+  }).then(()=> {
+    setDirectionsResponse(null)
+    setDistance('')
+    setDuration('')
+    setLat('')
+    setLon('')
+    setContent('')
+    setStarts('')
+    setEnd('')
+    inputRef.current.value = ''
+    destiantionRef.current.value = ''
+  })
+
+  
+
+}
+
+
 function Map(){
 
 return  (
@@ -393,10 +404,9 @@ return  (
 
 <AutoComplete></AutoComplete>
     <AutoCompleted></AutoCompleted>
-<input  type="text" className='client-input' placeholder='name ' defaultValue={user}  onBlur={(e) =>setName(e.target.value) }/>
-<input  type="text" className='client-input' placeholder='number ' defaultValue={userNumber} onBlur={(e) =>setNumber(e.target.value) }/>
-    <button onClick={confirm}> confirm </button>
-    <button onClick={calculateRoute} > enter </button>
+
+
+    <button onClick={calculateRoute} > confirm ride </button>
     <button onClick={clearRoute}> del route </button>
 
 </form>
