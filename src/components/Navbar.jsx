@@ -22,9 +22,8 @@ const Navbar =({user,admin,riders,manager}) => {
 
 
 
-
-
-
+if (user || admin || manager || riders) {
+  
   return (
     <div className="nav">
 
@@ -85,7 +84,12 @@ const Navbar =({user,admin,riders,manager}) => {
 
     
   )
+
+}
+
+
 }
 
 
 export default Navbar;
+

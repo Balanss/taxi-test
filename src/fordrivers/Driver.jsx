@@ -41,6 +41,7 @@ export default function Driver() {
   const [ndriver, setNdriver] = useState(null);
   const [rider, setRider] = useState([]);
   const [id, setId] = useState("");
+  const [show, setShow] = useState('none')
 
   const [local, setLocal] = useState([]);
   useEffect(() => {
@@ -353,6 +354,7 @@ export default function Driver() {
               onClick={() => {
                 setInterval(() => {
                   initMap();
+                  setShow('block')
                 }, 30000);
 
                 setTimeout(() => {
@@ -363,7 +365,8 @@ export default function Driver() {
               {" "}
               Open For Ride{" "}
             </button>
-            <button
+
+            <button style={{display:show}}
               className="button"
               onClick={() =>
                 setInterval(() => {

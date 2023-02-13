@@ -38,11 +38,11 @@ export default function Admin() {
 
 const uid = GetUserUid(); // ignore errror
 // getting current user function
-function GetCurrentUser(){
+ function GetCurrentUser(){
     const [user, setUser]=useState(null);
     useEffect(()=>{
         auth.onAuthStateChanged(user=>{
-            if(user){
+            if(user){ 
               fs.collection('admin').doc(user.uid).get().then(snapshot => {
                 setUser(snapshot.data().FullName);
               })
@@ -191,16 +191,13 @@ const LngResult = () => local.map((local,i) =>
  const [startLocation,setStartLocation] = useState ([])
  const [endLocation,setEndLocation] = useState ([])
  const [state, setState] = useState(-1);
-// 
+
 
 
 
 const Dest = () => test.map((test, index)  =>  ( <div key={index}    >
   
-  <form  onClick={() => setState(index)}
-    style={{
-      background: state === index ? 'salmon' : 'ghostwhite'
-    }}>
+  <form style={{background:'ghostwhite'}}>
   
   <p> Name: {test.name}</p>
   <p> Number: {test.number}</p>
@@ -246,7 +243,7 @@ useEffect(() => {
 }, []);
 
 
-console.log(admin)
+
 //add settimeout back to homepage
    
    if(!isLoaded){

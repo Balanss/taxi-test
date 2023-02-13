@@ -9,6 +9,7 @@ onSnapshot,query,addDoc,deleteDoc,serverTimestamp
 } from "firebase/firestore";
 
 import Geocode from "react-geocode";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
 
@@ -173,7 +174,7 @@ const [map, setMap] = useState(/** @type google.maps.Map */ (null))
 
   
 
-  function clearRoute() {
+ function clearRoute() {
     setDirectionsResponse(null)
     setDistance('')
     setDuration('')
@@ -289,10 +290,7 @@ const Client = () =>
   })
   
 
-function handleSumbit(e){
-  e.preventDefault();
 
-}
 
 
 
@@ -383,57 +381,65 @@ const AutoComplete = () => {
 
 }
 
+function handleSubmit(e) {
+  e.preventDefault()
+}
 
 function Map(){
-
-return  (
-<div  className='client-whole-div'>
-<Navbar user={user} admin={admin} riders={riders} manager={manager} />
-<GoogleMap id="map"
- zoom={12}
- center={center}
- mapContainerClassName="map-container client-map">
-  <Marker />
-          {directionsResponse && (
-            <DirectionsRenderer directions={directionsResponse} />
-          )}
-        
-</GoogleMap>
-<div className='client-status'> <Client  /></div> 
-<form onSubmit={handleSumbit} className='client-form'>
-
-<AutoComplete></AutoComplete>
-    <AutoCompleted></AutoCompleted>
-
-
-    <button onClick={calculateRoute} > confirm ride </button>
-    <button onClick={clearRoute}> del route </button>
-
-</form>
-
-<div className='client-find-me'>
-
-<div className='client-span'>
-<p>Distance: {distance}</p>
-<p> Duration:{duration}</p>
-</div>
-
-<button id='button'  className='map-btn ' onClick={() => 
-initMap()}> find me </button>
-<div id='reverse'>
-
-
-
-
-</div>
-</div>
-
-
-
-
-</div> 
-
-)}
+if (manager || user || admin ||riders){
+  return  (
+    <div  className='client-whole-div'>
+    <Navbar user={user} admin={admin} riders={riders} manager={manager} />
+    <GoogleMap id="map"
+     zoom={12}
+     center={center}
+     mapContainerClassName="map-container client-map">
+      <Marker />
+              {directionsResponse && (
+                <DirectionsRenderer directions={directionsResponse} />
+              )}
+            
+    </GoogleMap>
+    <div className='client-status'> <Client  /></div> 
+    
+    <form onSubmit={handleSubmit} className='form-things'> 
+    <AutoComplete></AutoComplete>
+        <AutoCompleted></AutoCompleted>
+        <button onClick={calculateRoute} > confirm ride </button>
+        <button onClick={clearRoute}> del route </button>
+    </form>
+    
+    
+    
+     
+    
+    
+    
+    <div className='client-find-me'>
+    
+    <div className='client-span'>
+    <p>Distance: {distance}</p>
+    <p> Duration:{duration}</p>
+    </div>
+    
+    <button id='button'  className='map-btn ' onClick={() => 
+    initMap()}> find me </button>
+    <div id='reverse'>
+    
+    
+    
+    
+    </div>
+    </div>
+    
+    
+    
+    
+    </div> 
+    
+    )
+}
+}
 
 
 
