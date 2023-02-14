@@ -128,6 +128,7 @@ const LngResult = () => local.map((local,i) =>
       distance : driver.distanceDispatch,
       status:"Awaiting Driver",
       toDriver: Number(number),
+      client:driver.clientId,
     }
    ), setNumber(0);
     const docRef = doc(db,"driver",driver.id);
@@ -137,7 +138,7 @@ const LngResult = () => local.map((local,i) =>
 
   }}> send to driver </button>
         <button  onClick={(e) => {deleteDoc(doc(db, "driver",driver.id))}}> delete </button>
-        <input type='number' className='driver-number' placeholder='driver-number'  onMouseOut={(e) => setNumber(e.target.value)} />
+        <input type='number' className='driver-number' placeholder='driver-number'defaultValue={number} onMouseOut={(e) => setNumber(e.target.value)} />
 </div> ))
 
 

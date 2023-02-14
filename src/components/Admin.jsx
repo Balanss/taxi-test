@@ -6,7 +6,7 @@ import Navbar from './Navbar'
 import {
     collection,
     getDocs,
-onSnapshot,query,orderBy,serverTimestamp,deleteDoc,doc,addDoc
+onSnapshot,query,orderBy,serverTimestamp,deleteDoc,doc,addDoc,updateDoc
   } from "firebase/firestore";
 
  import { GoogleMap, useLoadScript,Marker, DirectionsRenderer, Autocomplete,} from "@react-google-maps/api";
@@ -206,6 +206,7 @@ const Dest = () => test.map((test, index)  =>  ( <div key={index}    >
   <p> Avg duration : {test.duration}</p>
   <p> Distance : {test.distance}</p>
   <p> status : {test.status} </p>
+  <p> taken : {test.taken}</p>
   <button  onClick={(e,id) => {setStartLocation(test.start);  setEndLocation; (test.end); 
    const col=collection(db,"driver") // cant be driver
    addDoc(col, {
@@ -216,7 +217,11 @@ const Dest = () => test.map((test, index)  =>  ( <div key={index}    >
      distanceDispatch:test.distance,
      durationDispatch:test.duration,
      statusDispatch:'client waiting',
+     clientId:test.client,
    })
+   const docRef = doc(db,"test",test.id);
+   const payload = { taken: 'accepted by'+ " " + manager + admin }
+   updateDoc(docRef,payload)
   
   
      }}  >  <a href='https://balanss.github.io/taxi-test/#/d1'   target="_blank" rel="noreferrer"  > Accept Route</a></button>
@@ -226,7 +231,7 @@ const Dest = () => test.map((test, index)  =>  ( <div key={index}    >
 </div>))
 
 
-
+console.log(admin)
 
 
 const attemptPlay = () => {

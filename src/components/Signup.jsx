@@ -22,7 +22,7 @@ const handleSubmit = (e) => {
 
   auth.createUserWithEmailAndPassword(email, password).then((credentials) => {
 
-fs.collection("manager").doc(credentials.user.uid).set({
+fs.collection("users").doc(credentials.user.uid).set({
   FullName:fullName,
   Email:email,
   Password:password,

@@ -61,6 +61,8 @@ function GetCurrentUser(){
                     setUserNumber(snapshot.data().Number);
                     
 
+                    
+
 
                  })
 
@@ -280,7 +282,7 @@ const Client = () =>
       return (
         null
       )
-    } else {
+    } else if (driver.clientId === uid) {
      return (
         <div>
           <p> {driver.client} </p> 
@@ -361,8 +363,10 @@ const AutoComplete = () => {
     end:end,
     distance:results.routes[0].legs[0].distance.text,
     duration:results.routes[0].legs[0].duration.text,
-    number:number,
+    number:userNumber,
+    client:uid,
     status:'client waiting',
+    taken:"not yet taken",
     timestamp:serverTimestamp()
   }).then(()=> {
     setDirectionsResponse(null)

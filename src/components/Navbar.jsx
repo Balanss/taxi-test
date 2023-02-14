@@ -13,7 +13,7 @@ const Navbar =({user,admin,riders,manager}) => {
 
   const handleLogout = () => {
     auth.signOut().then(() =>{
-      navigate('/')
+      navigate('/login')
     })
   }
 

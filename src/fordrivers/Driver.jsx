@@ -2,23 +2,9 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import { db, auth, fs } from "../Firebase";
-import {
-  collection,
-  onSnapshot,
-  query,
-  addDoc,
-  deleteDoc,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import {collection,onSnapshot,query,addDoc,deleteDoc,doc,updateDoc,} from "firebase/firestore";
 import Map from "../components/Map";
-import {
-  GoogleMap,
-  useLoadScript,
-  Marker,
-  DirectionsRenderer,
-  Autocomplete,
-} from "@react-google-maps/api";
+import {GoogleMap,useLoadScript,Marker,DirectionsRenderer,Autocomplete,} from "@react-google-maps/api";
 
 export function State({ lat, lon }) {
   return (
@@ -42,6 +28,7 @@ export default function Driver() {
   const [rider, setRider] = useState([]);
   const [id, setId] = useState("");
   const [show, setShow] = useState('none')
+  const [clientId, setClientId] = useState()
 
   const [local, setLocal] = useState([]);
   useEffect(() => {
@@ -62,6 +49,7 @@ export default function Driver() {
       });
     };
     driver();
+    
   }, []);
 
   useEffect(() => {
@@ -147,9 +135,12 @@ export default function Driver() {
     client();
   }, []);
 
+
+
+  //shows status of current ride
   const Ride = () =>
-    driver.map((driver, index) => {
-      if (driver.toDriver === number) {
+    driver.map((driver, index) =>  {
+      if (driver.toDriver === ndriver) {
         return (
           <div key={index}>
             <h4> Client Name: {driver.name} </h4>
@@ -175,25 +166,11 @@ export default function Driver() {
       }
     });
 
-  const Clockin = () =>
-    driver.map((driver, index) => {
-      if (number === driver.toDriver) {
-        return (
-          <button
-            key={index}
-            onClick={() => {
-              setNdriver(driver.toDriver);
-            }}
-          >
-            {driver.toDriver}
-          </button>
-        );
-      }
-    });
 
+// shows status of client order and button to show client and admin that is pickedup. once client is pickedup go ahead and remove ride
   const Client = () =>
     client.map((client, index) => {
-      if (number === client.number) {
+      if (ndriver === matchNumb) {
         return (
           <div className="button-css" key={index}>
             <h4> Client Status : {client.client}</h4>
@@ -203,6 +180,7 @@ export default function Driver() {
                 const docRef = doc(db, "client", client.id);
                 const payload = { client: "client pickedup" };
                 updateDoc(docRef, payload);
+
               }}
             >
               {" "}
@@ -213,6 +191,8 @@ export default function Driver() {
       }
     });
 
+
+    //button that shows to admin that ride is accepted
   function Button() {
     const Dispatch = () =>
       dispatch.map((dispatch, index) => {
@@ -224,6 +204,7 @@ export default function Driver() {
     return Dispatch();
   }
 
+  
   function ButtonLocal() {
     const Test = () =>
       local.map((local, index) => {
@@ -243,21 +224,30 @@ export default function Driver() {
     });
   }
 
+const [matchNumb,setMatchNumb] = useState()
+const [matchCid,setMatchCid] = useState()
+  //accepts ride 
   function ButtonDriver() {
     const Test = () =>
       driver.map((driver, index) => {
+        setMatchNumb(ndriver)
+        setMatchCid(driver.client)
         const docRef1 = doc(db, "drivers", driver.id);
         const payload1 = { status: "accepted" };
         updateDoc(docRef1, payload1);
 
         const ref = collection(db, "client");
-        addDoc(ref, {
-          client: "driver underway",
-          number: Number(number),
-        });
+    if (matchCid === driver.client){
+      addDoc(ref, {
+        client: "driver underway",
+        number: Number(ndriver),
+        clientId: driver.client,
+      });
+    }
       });
     return Test();
   }
+console.log(matchNumb)
 
   // get data id to match
 
@@ -304,6 +294,7 @@ export default function Driver() {
             .get()
             .then((snapshot) => {
               setUser(snapshot.data().FullName);
+              setNdriver(snapshot.data().Number);
             });
         } else {
           setUser(null);
@@ -335,16 +326,17 @@ export default function Driver() {
 
   const manager = GetCurrentManager();
 
-  // (ndriver ===number)
+
+ 
   if (!isLoaded) {
     return <div> loading .... </div>;
   }
-  if ((isLoaded && manager) || riders) {
+  if ((isLoaded && manager || ndriver) || (riders)) {
     return (
       <div className="">
         <Navbar riders={riders} manager={manager} />
 
-        <Clockin />
+     
 
         <div className="whole-driver-div">
           <div className="driver-view">
