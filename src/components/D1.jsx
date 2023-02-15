@@ -97,6 +97,7 @@ const LngResult = () => local.map((local,i) =>
 
 <h2  onClick={() => { setDeleteMarkers(local.id) }}>{local.number} </h2> 
   <button onClick={(e) =>{  deleteDoc(doc(db, "place",local.id))}}> remove    </button>  
+  <p> {local.lat} + {local.lng}</p>
  </div> ))
 
 

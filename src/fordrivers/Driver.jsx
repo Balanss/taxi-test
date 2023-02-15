@@ -39,7 +39,10 @@ export default function Driver() {
       });
     };
     local();
+    
   }, []);
+
+ 
 
   useEffect(() => {
     const driver = async () => {
@@ -100,6 +103,14 @@ export default function Driver() {
           map.setCenter(pos);
           setLat(position.coords.latitude);
           setLon(position.coords.longitude);
+          const colRef = collection(db, "place");
+            addDoc(colRef, {
+              lat: position.coords.latitude,
+              lng:position.coords.longitude,
+              number: number,
+            
+            });
+        
          
         },
         function () {
@@ -205,24 +216,35 @@ export default function Driver() {
   }
 
   
-  function ButtonLocal() {
-    const Test = () =>
-      local.map((local, index) => {
-        const docRef1 = doc(db, "place", local.id);
-        const payload1 = { lat: lat, lng: lon };
-        updateDoc(docRef1, payload1);
-      });
-    return Test();
-  }
 
   function handleClick() {
     const colRef = collection(db, "place");
     addDoc(colRef, {
       lat: lat,
-      lng: lon,
-      number: number,
+      lng:lon,
+      number: ndriver,
     });
   }
+
+  function ButtonLocal () {
+    const Test = () =>
+    setInterval(() => {
+      local.map((local, index) => {
+       if (local.id){
+         const docRef1 = doc(db, "place", local.id);
+        const payload1 = { lat: lat, lng: lon };
+        updateDoc(docRef1, payload1);
+        console.log(local.id)
+       }
+      });
+    },1000)
+    return Test();
+  }
+
+
+
+
+console.log(lat , lon)
 
 const [matchNumb,setMatchNumb] = useState()
 const [matchCid,setMatchCid] = useState()
@@ -247,7 +269,7 @@ const [matchCid,setMatchCid] = useState()
       });
     return Test();
   }
-console.log(matchNumb)
+
 
   // get data id to match
 
@@ -347,28 +369,31 @@ console.log(matchNumb)
                 setInterval(() => {
                   initMap();
                   setShow('block')
-                }, 30000);
+                }, 30000); 
 
                 setTimeout(() => {
                   handleClick();
-                }, 11000);
+                },9000)
               }}
             >
               {" "}
               Open For Ride{" "}
             </button>
 
-            <button style={{display:show}}
+            <button 
               className="button"
-              onClick={() =>
-                setInterval(() => {
+              onClick={ () =>{
+               setInterval(() => {
                   ButtonLocal();
                 }, 9000)
               }
+              }
+              
             >
               {" "}
               Send to Dispatch{" "}
             </button>
+            <p> {lat} , {lon}  </p>
             <Ride />{" "}
             <button
               className="button"
