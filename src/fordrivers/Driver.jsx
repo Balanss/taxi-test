@@ -103,13 +103,20 @@ export default function Driver() {
           map.setCenter(pos);
           setLat(position.coords.latitude);
           setLon(position.coords.longitude);
-          const colRef = collection(db, "place");
-            addDoc(colRef, {
-              lat: position.coords.latitude,
-              lng:position.coords.longitude,
-              number: number,
+          // const colRef = collection(db, "place");
+          //   addDoc(colRef, {
+          //     lat: position.coords.latitude,
+          //     lng:position.coords.longitude,
+          //     number: number,
             
-            });
+          //   });
+
+          local.map((local, index) => {
+            const docRef1 = doc(db, "place","wNY5vHqvIZAsDKAGvYie");
+           const payload1 = { lat: position.coords.latitude,lng: position.coords.longitude};
+           updateDoc(docRef1, payload1);
+           console.log(local.id)   
+         });
         
          
         },
@@ -227,17 +234,15 @@ export default function Driver() {
   }
 
   function ButtonLocal () {
-    const Test = () =>
-    setInterval(() => {
-      local.map((local, index) => {
-       if (local.id){
-         const docRef1 = doc(db, "place", local.id);
-        const payload1 = { lat: lat, lng: lon };
-        updateDoc(docRef1, payload1);
-        console.log(local.id)
-       }
-      });
-    },1000)
+    const Test = () =>{
+        local.map((local, index) => {
+           const docRef1 = doc(db, "place", local.id);
+          const payload1 = { lat: lat, lng: lon };
+          updateDoc(docRef1, payload1);
+          console.log(local.id)   
+        });
+    }
+    
     return Test();
   }
 
@@ -372,7 +377,7 @@ const [matchCid,setMatchCid] = useState()
                 }, 30000); 
 
                 setTimeout(() => {
-                  handleClick();
+                 
                 },9000)
               }}
             >
