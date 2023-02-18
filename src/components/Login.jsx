@@ -12,19 +12,76 @@ const navigate = useNavigate()
 const [ errorMsg,setErrorMsg ] = useState('')
 const [successMsg,setSuccessMsg] = useState('')
 
+ // getting current user uid
+ function GetUserUid() {
+  const [uid, setUid] = useState(null);
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUid(user.uid);
+      }
+    });
+  }, []);
+  return uid;
+}
+
+const uid = GetUserUid(); // ignore errror
+// getting current user function
+function GetCurrentUser() {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        fs.collection("rider")
+          .doc(user.uid)
+          .get()
+          .then((snapshot) => {
+            setUser(snapshot.data().FullName);
+          });
+      } else {
+        setUser(null);
+      }
+    });
+  }, []);
+  return user;
+}
+
+function GetCurrentManager() {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        fs.collection("manager")
+          .doc(user.uid)
+          .get()
+          .then((snapshot) => {
+            setUser(snapshot.data().FullName);
+          });
+      } else  {
+        setUser(null);
+      }
+    });
+  }, []);
+  return user;
+}
+
+const manager = GetCurrentManager();
+
+
+const riders = GetCurrentUser();
+console.log(riders)
 
 const handleSubmit = (e) =>{
     e.preventDefault()
     auth.signInWithEmailAndPassword(email, password).then(() => {
-      setSuccessMsg("Signup successful, you will be redirected to Home page!!")
-      setEmail("")
-      setPassword("")
-      setErrorMsg("")
-      setTimeout(() => {
-        setSuccessMsg("");
-        navigate("/")
-      },3000)
-    }).catch(error => setErrorMsg(error.message))
+   if(riders){
+   navigate('/driver')
+   } else if (manager){
+navigate("/admin")
+   }
+   
+  
+  }).catch(error => setErrorMsg(error.message))
   
   }
 

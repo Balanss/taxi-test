@@ -2,8 +2,7 @@ import React from 'react'
 import {Link}   from 'react-router-dom'
 import {useNavigate} from 'react-router-dom'
 import { auth} from "../Firebase"
-import {useAuthState} from 'react-firebase-hooks/auth';
-import LoginAnon from './LoginAnon'
+
 
 
 
@@ -18,27 +17,17 @@ const Navbar =({user,admin,riders,manager}) => {
   }
 
   
-  const [userAnon] = useAuthState(auth);
 
 
 
-if (user || admin || manager || riders) {
+
+if ( admin || manager ) {
   
   return (
     <div className="nav">
 
-{user&& <> 
-  <Link className='nav-link' to='/'>map</Link>  
-<div className='logged-in'>
-<p> logged in as {user}</p>
-<button className='navlink navlinklogout'
-                     onClick={handleLogout}>LOGOUT</button>
-</div>
-
-</>}
-
 {admin&& <> 
-  <Link className='nav-link' to='/'>map</Link>  
+
 <Link className='nav-link' to='/admin'>admin</Link>
 <div className='logged-in'>
 <p> logged in as {admin}</p>
@@ -49,9 +38,7 @@ if (user || admin || manager || riders) {
 </>}
 
 {manager&& <> 
-  <Link className='nav-link' to='/'>map</Link>  
 <Link className='nav-link' to='/admin'>admin</Link>
-<Link className='nav-link' to='/d1'>d1</Link>
 <Link className='nav-link' to='/driver'>driver</Link>
 <div className='logged-in'>
 <p> logged in as {manager}</p>
@@ -61,20 +48,11 @@ if (user || admin || manager || riders) {
 
 </>}
 
-{riders&& <> 
- 
-<Link className='nav-link' to='/driver'>driver</Link>
-<div className='logged-in'>
-<p> logged in as {riders}</p>
-<button className='navlink navlinklogout'
-                     onClick={handleLogout}>LOGOUT</button>
-</div>
-
-</>}
 
 
 
-{!user && !admin && !riders && !manager &&<> 
+
+{!admin && !riders && !manager &&<> 
 <Link className='nav-link' to='/login'>login</Link>
 <Link className='nav-link' to='/signup'>signup</Link>
 </>}
@@ -85,6 +63,17 @@ if (user || admin || manager || riders) {
     
   )
 
+} else if (riders){
+  {riders&& <> 
+ 
+    <Link className='nav-link' to='/driver'>driver</Link>
+    <div className='logged-in'>
+    <p> logged in as {riders}</p>
+    <button className='navlink navlinklogout'
+                         onClick={handleLogout}>LOGOUT</button>
+    </div>
+    
+    </>}
 }
 
 

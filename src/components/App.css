@@ -20,6 +20,21 @@ body{
      height: 65vh;
 }
 
+.form-admin{
+    text-align: center;
+    margin-top: 30px;
+}
+
+.divclientstatus{
+    background-color: aliceblue;
+    width: 75vw;
+    margin: auto;
+    margin-bottom: 40px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+
 .map{
      position: fixed;
 }
@@ -110,7 +125,7 @@ width: 50vw;
     align-content: center;
     padding: 10px;
     text-align: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -134,7 +149,7 @@ width: 50vw;
 }
 
     .driver-view{
-        width: 50vw;
+        width: 60vw;
         padding: 30px;
         margin: auto;
         background-color: whitesmoke;
@@ -187,11 +202,7 @@ width: 50vw;
         flex-direction: column;
       }
 
-      .client-map{
-          margin-bottom: 30px;
-          width: 100vw;
-          height: 400px;
-      }
+
 
       .client-input{
           height: 30px;
@@ -202,14 +213,6 @@ width: 50vw;
           text-align: center;
       }
 
-      .client-find-me{
-          text-align: center;
-          margin-top: 30px;
-      }
-      .client-whole-div{
-          background-color: cornflowerblue;
-         
-      }
 
       .client-span{
           background-color: whitesmoke;
@@ -230,26 +233,28 @@ width: 50vw;
           margin-bottom: 10px;
           border-radius: 10px;
       }
-#reverse{
-     margin-top: 50px;
-     margin-top: 10px;
-     margin-bottom: 20px;
-     padding-bottom: 20px;
-}
-
-.gm-style-mtc{
-     display: none;
-}
 
 
     /* driver page 1080p */
   
 
 @media screen and  (min-width:1080px){
+    .logged-in {
+        position: absolute;
+        right: 100px;
+    }
+    
 
     .rides{
         width: 39vw;
-       
+   }
+
+   .divclientstatus{
+    width: 15vw;
+   }
+
+   .client-span{
+    width: 10vw;
    }
 
      .driver-view{
@@ -293,6 +298,10 @@ width: 50vw;
           height: 800px;
       }
 
+      .client-input{
+        width: 30vw;
+      }
+
       .a{
         background-color: blue !important;
       }
@@ -310,23 +319,7 @@ width: 50vw;
       
        /* client page 1080p */
 
-      .client-map{
-          width: auto;
-          height: 50vh;
-      }
-
-      .client-input{
-          width: 500px;
-      }
-
-      .client-span{
-          width: 500px;
-      }
-
-      .client-status{
-          width: 500px;
-      }
-
+    
 
       .nav {
           height: auto;
@@ -340,10 +333,7 @@ width: 50vw;
           justify-content: flex-start;
       }
       
-      .logged-in {
-          position: absolute;
-          right: 100px;
-      }
+    
 }
 
 

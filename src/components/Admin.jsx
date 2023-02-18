@@ -1,27 +1,15 @@
 import React from 'react'
 import { useState , useEffect , useRef} from 'react'
 import { db , auth ,fs} from '../Firebase'
-import Product from './Product'
 import Navbar from './Navbar'
-import {
-    collection,
-    getDocs,
-onSnapshot,query,orderBy,serverTimestamp,deleteDoc,doc,addDoc,updateDoc
-  } from "firebase/firestore";
-
+import {collection,getDocs,onSnapshot,query,orderBy,serverTimestamp,deleteDoc,doc,addDoc,updateDoc} from "firebase/firestore";
  import { GoogleMap, useLoadScript,Marker, DirectionsRenderer, Autocomplete,} from "@react-google-maps/api";
- import Pending from '../fordrivers/Pending'
- import correct from "../Image/untitled.mp3"
- import {Link} from 'react-router-dom'
 
 
 
 
 //newer version of using cloud db
 export default function Admin() {
-
-
-
 
   // getting current user uid
   function GetUserUid(){
@@ -94,29 +82,34 @@ const manager = GetCurrentManager();
   const [directionsResponse, setDirectionsResponse] = useState(null)
 
 
-/** @type React.ImmutableRefObject<HTMLInputElement> */
-const originRef = useRef()
-/** @type React.MutableRefObject<HTMLInputElement> */
-const destiantionRef = useRef()
+// /** @type React.ImmutableRefObject<HTMLInputElement> */
+// const originRef = useRef()
+// /** @type React.MutableRefObject<HTMLInputElement> */
+// const destiantionRef = useRef()
+
+let destRef = useRef()
+let inputRef= useRef()
 
 async function calculateRoute() {
-if (originRef.current.value === '' || destiantionRef.current.value === '') {
+if (inputRef.current.value === '' || destRef.current.value === '') {
   return 
 }
 
-
+ 
 
 // eslint-disable-next-line no-undef
 const directionsService = new google.maps.DirectionsService()
 const results = await directionsService.route({
-  origin: originRef.current.value,
-  destination: destiantionRef.current.value,
+  origin: inputRef.current.value,
+  destination: destRef.current.value,
   // eslint-disable-next-line no-undef
   travelMode: google.maps.TravelMode.DRIVING,
 })
 setDirectionsResponse(results)
 setDistance(results.routes[0].legs[0].distance.text)
 setDuration(results.routes[0].legs[0].duration.text)
+setClientAddress(inputRef.current.value)
+setClientDest(destRef.current.value)
 
 }
 
@@ -128,18 +121,18 @@ setDuration(results.routes[0].legs[0].duration.text)
 
 
 
- const [ test, setTest] = useState([])
+ const [ drivers, setDrivers] = useState([])
 // queries
 const q = query()
 useEffect(() => {
-    const getTest = async () => {
-      const colRef =(collection(db, 'test'));
+    const getDrivers = async () => {
+      const colRef =(collection(db, 'drivers'));
        const q = query(colRef,orderBy("timestamp",'desc'));
       onSnapshot(q, (snapshot) => {
-        setTest(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        setDrivers(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       })
     }
-    getTest()
+    getDrivers()
   }, [])
 
   
@@ -186,67 +179,85 @@ const LngResult = () => local.map((local,i) =>
 
 
  const [number, setNumber ] = useState('')
- const soundEl = useRef(null)
- const [ name, setName ] = useState('')
- const [startLocation,setStartLocation] = useState ([])
- const [endLocation,setEndLocation] = useState ([])
- const [state, setState] = useState(-1);
+const [clientName,setClientName] = useState('') 
+const [ clientNumber, setClientNumber] = useState()
+const [ clientAddress, setClientAddress ] = useState('')
+const[clientDest, setClientDest] = useState('')
 
 
 
 
-const Dest = () => test.map((test, index)  =>  ( <div key={index}    >
-  
-  <form style={{background:'ghostwhite'}}>
-  
-  <p> Name: {test.name}</p>
-  <p> Number: {test.number}</p>
-  <p> From : {test.start}</p>
-  <p> To : {test.end}</p>
-  <p> Avg duration : {test.duration}</p>
-  <p> Distance : {test.distance}</p>
-  <p> status : {test.status} </p>
-  <p> taken : {test.taken}</p>
-  <button  onClick={(e,id) => {setStartLocation(test.start);  setEndLocation; (test.end); 
-   const col=collection(db,"driver") // cant be driver
-   addDoc(col, {
-     nameDispatch:test.name,
-     numberDispatch:test.number,
-     pickupDispatch: test.start,
-     ToDispatch:test.end,
-     distanceDispatch:test.distance,
-     durationDispatch:test.duration,
-     statusDispatch:'client waiting',
-     clientId:test.client,
-   })
-   const docRef = doc(db,"test",test.id);
-   const payload = { taken: 'accepted by'+ " " + manager + admin }
-   updateDoc(docRef,payload)
-  
-  
-     }}  >  <a href='https://balanss.github.io/taxi-test/#/d1'   target="_blank" rel="noreferrer"  > Accept Route</a></button>
-        <button  onClick={(e) => {deleteDoc(doc(db, "test",test.id))}}> delete </button>
-  </form>
-  
-</div>))
-
-
-console.log(admin)
-
-
-const attemptPlay = () => {
-  soundEl &&
-    soundEl.current &&
-    soundEl.current.play().catch(error => {
-      console.error("Error attempting to play", error);
-    });
+const AutoComplete = () => {
+  const autoCompleteRef = useRef()
+  inputRef = useRef()
+  const options = {
+    componentRestrictions: { country: "sr" },
+  };
+  useEffect(() => {
+    autoCompleteRef.current = new window.google.maps.places.Autocomplete(
+      inputRef.current,
+      options
+     );
+  },[])
+  return (
+    <div className='displayflex'> 
+      <input type="text" className='client-input' placeholder="Enter Name" onMouseLeave={(e) => setClientName(e.target.value)} defaultValue={clientName} />
+      <input type='number' className='client-input' placeholder="Enter Number" onMouseLeave={(e) => setClientNumber(e.target.value)} defaultValue={clientNumber} /> 
+      <input id='input' className='client-input' type="text" placeholder='from' defaultValue={clientAddress}  ref={inputRef}  onBlur={(e) =>setClientAddress (e.target.value) }/>
+     
+     </div>
    
-};
+   )
+}
 
-useEffect(() => {
-  attemptPlay();
-}, []);
 
+
+const AutoCompleted = () => {
+  const autoCompleteRef = useRef();
+  destRef = useRef();
+  const options = {
+   componentRestrictions: { country: "sr" },
+  };
+  useEffect(() => {
+   autoCompleteRef.current = new window.google.maps.places.Autocomplete(
+    destRef.current,
+    options
+   );
+  }, []);
+  return (
+   <div>
+    <input type="text" className='client-input' placeholder='to'  ref={destRef} defaultValue={clientDest} onBlur={(e) => setClientDest(e.target.value) }   />
+    <input type='text'  className='client-input' placeholder='driver number' defaultValue={number} onMouseLeave={(e) => setNumber(e.target.value)} />
+   </div>
+  );
+ };
+
+
+ function clearRoute() {
+  setDirectionsResponse(null)
+  setDistance('')
+  setDuration('')
+  setClientName('')
+  setClientNumber('')
+  inputRef.current.value = ''
+  destRef.current.value = ''
+}
+
+function confirmRoute() {
+  const colRef=collection(db,"drivers")
+  addDoc(colRef, {
+    name:clientName,
+    start:clientAddress,
+    end:clientDest,
+    distance:distance,
+    duration:duration,
+    number:clientNumber,
+    client:uid,
+    status:'Awaiting driver',
+    ndriver:Number(number),
+    timestamp:serverTimestamp()
+  })
+}
 
 
 //add settimeout back to homepage
@@ -265,51 +276,44 @@ useEffect(() => {
   
   <div className='rides'> 
   <div className='admin-see'>
-  <Dest />
   
-  <Pending />   
+ 
+
+<form className='form-admin' onClick={(e) => e.preventDefault()}>
+<AutoComplete />
+<AutoCompleted />
+<button onClick={calculateRoute} > Check distance </button>
+ <button onClick={confirmRoute} > send to driver </button> 
+<button onClick={clearRoute}> del route </button>
+{drivers.map((driver,i) => ( <div className='divclientstatus'>
+ <p> status : {driver.status}</p>
+ <p> client name : {driver.name} </p>
+ <button onClick={() => {deleteDoc(doc(db,'drivers',driver.id))}}> remove ride </button>
+</div>))}
+<div className='client-span'>
+    <p>Distance: {distance}</p>
+    <p> Duration:{duration}</p>
+    </div>
+</form>
   </div>
-   <input className='hide' id='input' type="text" placeholder='from'  ref={originRef} defaultValue={startLocation}  /> 
-         <input className='hide' type="text" placeholder='to'  ref={destiantionRef}  defaultValue={endLocation} /> 
-    
-  
-  
-   
          </div> 
          
         <div className='map-and-markers'>
-        <GoogleMap id="map"
-         zoom={12}
-   center={center}
-   mapContainerClassName="map-container" >
+        <GoogleMap id="map"  zoom={12} center={center}  mapContainerClassName="map-container" >
      {local.map((local,i) => (
-    <Marker 
-    key={i}
-    position = {{lat:local.lat,lng:local.lng}}
-    label="yello"/>
-  
-   ))}
-   
+       <Marker 
+         key={i}
+        position = {{lat:local.lat,lng:local.lng}}
+        label="yello"/>
+  ))} 
             {directionsResponse && (
               <DirectionsRenderer directions={directionsResponse} />
             )}
-  
-    
-  
          </GoogleMap>
         <div className='driverLocal'> 
         <LngResult />
          </div>
         </div>
-         
-       
-         <audio 
-          src={correct}
-          ref={soundEl}
-          muted
-         
-          > sound</audio>
-  
         </div>
        
        

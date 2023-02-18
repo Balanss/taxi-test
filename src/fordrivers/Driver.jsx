@@ -3,7 +3,6 @@ import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import { db, auth, fs } from "../Firebase";
 import {collection,onSnapshot,query,addDoc,deleteDoc,doc,updateDoc,} from "firebase/firestore";
-import Map from "../components/Map";
 import {GoogleMap,useLoadScript,Marker,DirectionsRenderer,Autocomplete,} from "@react-google-maps/api";
 
 export function State({ lat, lon }) {
@@ -55,17 +54,6 @@ export default function Driver() {
     
   }, []);
 
-  useEffect(() => {
-    const dispatch = async () => {
-      const colRef = collection(db, "driver");
-      onSnapshot(colRef, (snapshot) => {
-        setDispatch(
-          snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-        );
-      });
-    };
-    dispatch();
-  }, []);
 
   useEffect(() => {
     const rider = async () => {
@@ -157,18 +145,18 @@ export default function Driver() {
 
   //shows status of current ride
   const Ride = () =>
-    driver.map((driver, index) =>  {
-      if (driver.toDriver === ndriver) {
+    driver.map((driver, index) =>  { console.log(driver.ndriver , ndriver)
+      if (driver.ndriver === ndriver) {
         return (
           <div key={index}>
             <h4> Client Name: {driver.name} </h4>
             <h4> number: {driver.number}</h4>
-            <h4> From : {driver.To} </h4>
-            <h4> To : {driver.pickup} </h4>
+            <h4> From : {driver.start} </h4>
+            <h4> To : {driver.end} </h4>
             <h4> Distance : {driver.distance}</h4>
             <h4> Avg Duration : {driver.duration}</h4>
             <h4> Ride Status : {driver.status}</h4>
-            <h4> Driver : {driver.toDriver} </h4>
+            <h4> Driver : {driver.ndriver} </h4>
             <h4
               onClick={() => {
                 setId(driver.id);
@@ -187,16 +175,16 @@ export default function Driver() {
 
 // shows status of client order and button to show client and admin that is pickedup. once client is pickedup go ahead and remove ride
   const Client = () =>
-    client.map((client, index) => {
+    driver.map((driver, index) => {
       if (ndriver === matchNumb) {
         return (
           <div className="button-css" key={index}>
-            <h4> Client Status : {client.client}</h4>
+            {/* <h4> Client Status : {client.client}</h4> */}
             <button
               className="button"
               onClick={() => {
-                const docRef = doc(db, "client", client.id);
-                const payload = { client: "client pickedup" };
+                const docRef = doc(db, "drivers", driver.id);
+                const payload = { status: "client pickedup" };
                 updateDoc(docRef, payload);
 
               }}
@@ -215,7 +203,7 @@ export default function Driver() {
     const Dispatch = () =>
       dispatch.map((dispatch, index) => {
         const docRef = doc(db, "driver", dispatch.id);
-        const payload = { statusDispatch: "accepted" };
+        const payload = { status: "accepted" };
         updateDoc(docRef, payload);
       });
 
@@ -262,15 +250,6 @@ const [matchCid,setMatchCid] = useState()
         const docRef1 = doc(db, "drivers", driver.id);
         const payload1 = { status: "accepted" };
         updateDoc(docRef1, payload1);
-
-        const ref = collection(db, "client");
-    if (matchCid === driver.client){
-      addDoc(ref, {
-        client: "driver underway",
-        number: Number(ndriver),
-        clientId: driver.client,
-      });
-    }
       });
     return Test();
   }
